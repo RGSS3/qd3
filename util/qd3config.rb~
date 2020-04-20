@@ -1,0 +1,5 @@
+module QD3Util
+	def self.qd3config
+		File.read("QD3FILE")
+	end
+end
