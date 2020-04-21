@@ -25,22 +25,23 @@ module QD3Util
 		@logger = r
 	end
 	def ssh_cmdline(config, support: nil, 
-			                connector: "plink.exe",
 			                before: nil,
+			                connector: nil,
 			                filename: "",
 			                after: nil, 
 			                path: nil)
 		if !config.include?("ssh")
 			return ""
 		end
-		
+		connector = connector || @ssh_connector || "plink.exe"
+		ssh = @sshseg ? config["ssh"][@sshseg] : config["ssh"] 
 		cmdline = "#{ENV['QD3_BASE_PUTTY']}\\#{connector} "
-		if config["ssh"]["pass"]
-			cmdline << " -pw " << config["ssh"]["pass"]
+		if ssh["pass"]
+			cmdline << " -pw " << ssh["pass"]
 		end
 		
-		if config["ssh"]["port"]
-			cmdline << " -P " << config["ssh"]["port"].to_s
+		if ssh["port"]
+			cmdline << " -P " << ssh["port"].to_s
 		end
 		
 		if support
@@ -51,8 +52,8 @@ module QD3Util
 			cmdline << " " << before << " "
 		end
 		
-		if config["ssh"]["user"]
-			cmdline << " " << config["ssh"]["user"] << "@localhost#{path}"
+		if ssh["user"]
+			cmdline << " " << ssh["user"] << "@localhost#{path}"
 		else
 			cmdline << " localhost#{path}"
 		end

@@ -1,4 +1,15 @@
 module QD3Util
+  class MyFileLogger
+  	  def initialize(filename)
+  	  	  @filename = filename
+  	  end
+  	  
+  	  def puts(*args)
+  	  	  open(@filename, "a") do |f|
+  	  	  	  f.puts *args
+  	  	  end
+  	  end
+  end
   def puts(*args)
   	  @logger&.puts args
   end

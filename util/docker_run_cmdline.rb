@@ -11,7 +11,9 @@ module QD3Util
 			cmdline << " -v/mnt/#{k}:/mnt/#{k}"
 		}
 		cmdline << " -v/mnt/here:/mnt/here"
-		
+		if @container_name
+			cmdline << " --name #{@container_name}"
+		end
 		
 		((config["docker"] || {})["network"] || {}).each{|k, v|
 			cmdline << " -p #{k}:#{v}"
@@ -19,5 +21,12 @@ module QD3Util
 		cmdline << " " << line
 		File.write "qd3_docker.tmp", cmdline
 		ssh_cmdline(config, connector: "putty") + " -m qd3_docker.tmp -t" 
+	end
+	
+	def docker_exec_cmdline(config, line)
+		cmdline = "docker exec -it #{@container_name || "default"} #{line}"
+		File.write "qd3_docker.tmp", cmdline
+		connector = options[:connector] || "plink.exe"
+		ssh_cmdline(config, connector: connector) + " -ssh -t \"#{cmdline}\"" 
 	end
 end
