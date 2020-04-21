@@ -41,7 +41,7 @@ class QD3 < Thor
 	def initialize(*)
 		super
 		enable_vt
-		@logger = File.open("qd3.log", "w") 
+		@logger = MyFileLogger.new("qd3.log") 
 	end
 end
 a = File.dirname(File.expand_path(__FILE__))
