@@ -26,8 +26,9 @@ module QD3Util
 		if cdrom
 			cmdline << " -cdrom " << cdrom
 		end
-		if config["qemu"]["accelerator"] == "hax"
-			cmdline << " -accel hax"
+		acc = config["qemu"]["accelerator"]
+		if acc && ["hax", "whpx"].include?(acc)
+			cmdline << " -accel #{acc}"
 		end
 		cmdline
 	end

@@ -3,19 +3,24 @@ class QD3
 	def start
 		config = qd3config
 		cmdline = qemu_cmdline(config)
-		run = "#{ENV['QD3_EXE_QEMU']} #{cmdline}"
+		run = "#{ENV['QD3_EXE_QEMU']} #{cmdline} 2>nul >nul"
 		pid = Process.spawn run
 		config["pid"] = pid
+		info "Waiting for machine to boot"
 		saveconfig(config)
 		ssh_ping config
+		info "Working for provisions"
 		(config["init"] || []).each{|x|
 			ssh_run config, " \"" + x + "\""	
 		}
+		info "Working for folder mountings"
 		(config["mount"] || {}).each{|k, v|
 			ssh_mount k, v
 		}
 		ssh_mount "here"
+		info "Done"
 	end
+	
 	
 	desc "edit", "Edit the config file"
 	def edit

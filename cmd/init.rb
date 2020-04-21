@@ -4,8 +4,8 @@ class QD3
 	def init(*args)
 		tem = args[0] || "default"
 		if FileTest.exists?("QD3FILE.yml")
-			STDERR.puts "QD3FILE.yml already exists."
-			STDERR.puts "If you really wanted to continue, please remove it."
+			abort  "QD3FILE.yml already exists.
+If you really wanted to continue, please remove it."
 			exit 1
 		else
 			template_file = File.join(ENV['QD3_TEMPLATE'], "#{tem}.yml")
@@ -13,9 +13,9 @@ class QD3
 				t = ERB.new(File.read(template_file)).result(binding)
 				if check_yaml(t)
 					File.write "QD3FILE.yml", t 
-					puts "Initialized"
+					info "Initialized"
 				else
-					puts "There is some error in the template"
+					abort "There is some error in the template"
 				end
 			rescue Errno::ENOENT
 				abort "The template file #{tem}.yml does not exist"

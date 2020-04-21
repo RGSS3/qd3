@@ -16,7 +16,10 @@ module QD3Util
 end
 class QD3 < Thor
 	include QD3Util
-	private
+	def initialize(*)
+		super
+		@logger = File.open("qd3.log", "w") 
+	end
 end
 a = File.dirname(File.expand_path(__FILE__))
 Dir.glob(File.join(a, "cmd/*.rb")) do |f|

@@ -1,13 +1,13 @@
 module QD3Util
-	def ssh_run(config, line, logger = lambda{|x| puts x})
-		logger.call("SSH> " + line)
+	def ssh_run(config, line)
+		@logger&.puts("SSH> " + line)
 		system ssh_cmdline(config, support: "-batch") + " " + line
 	end
 	def ssh_push(a, b)
-		system ssh_cmdline(qd3config, connector: "pscp.exe", before: a, path: ":#{b}")
+		Kernel.system ssh_cmdline(qd3config, connector: "pscp.exe", before: a, path: ":#{b}")
 	end
 	def ssh_pull(a, b)
-		system ssh_cmdline(qd3config, connector: "pscp.exe", path: ":#{a}", after: b)
+		Kernel.system ssh_cmdline(qd3config, connector: "pscp.exe", path: ":#{a}", after: b)
 	end
 	def ssh_mount(name, dir = Dir.getwd)
 		user = ENV['username']
@@ -19,7 +19,10 @@ module QD3Util
 		system "net share #{share}=#{dir}  /grant:everyone,full"
 		ssh_run config, "sudo umount -f /mnt/#{name}"
 		ssh_run config, "sudo mkdir /mnt/#{name}"
-		ssh_run config, %{sudo mount -v -t cifs -o username="#{user}",password="#{pass}",dir_mode=0777,file_mode=0777 //10.0.2.2/#{share} /mnt/#{name}}, lambda{|x|}
+		r = @logger
+		@logger = nil
+		ssh_run config, %{sudo mount -v -t cifs -o username="#{user}",password="#{pass}",dir_mode=0777,file_mode=0777 //10.0.2.2/#{share} /mnt/#{name}}
+		@logger = r
 	end
 	def ssh_cmdline(config, support: nil, 
 			                connector: "plink.exe",
