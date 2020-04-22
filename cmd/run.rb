@@ -1,9 +1,11 @@
 class QD3
 	desc "start", "Run for the first time"
+	option :qemu, desc: "(advanced) extra options passed to qemu"
 	def start
 		config = qd3config
 		cmdline = qemu_cmdline(config)
-		run = "#{ENV['QD3_EXE_QEMU']} #{cmdline} 2>nul >nul"
+		puts "#{ENV['QD3_EXE_QEMU']} #{cmdline} #{options[:qemu]}"
+		run = "#{ENV['QD3_EXE_QEMU']} #{cmdline} #{options[:qemu]} 2>nul >nul"
 		pid = Process.spawn run
 		config["pid"] = pid
 		info "Waiting for machine to boot"
@@ -13,12 +15,13 @@ class QD3
 		(config["init"] || []).each{|x|
 			ssh_run config, " \"" + x + "\""	
 		}
-		docker_make_mirror(config)
+		
 		info "Working for folder mountings"
 		(config["mount"] || {}).each{|k, v|
 			ssh_mount k, v
 		}
 		ssh_mount "here"
+		docker_make_mirror(config)
 		info "Working for provisions 2/2"
 		(config["after-init"] || []).each{|x|
 			ssh_run config, " \"" + x + "\""	
