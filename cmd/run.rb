@@ -10,17 +10,19 @@ class QD3
 		config["pid"] = pid
 		info "Waiting for machine to boot"
 		saveconfig(config)
-		ssh_ping config
+		ssh_ping config, pid
 		info "Working for provisions 1/2"
 		(config["init"] || []).each{|x|
 			ssh_run config, " \"" + x + "\""	
 		}
 		
+=begin
 		info "Working for folder mountings"
 		(config["mount"] || {}).each{|k, v|
 			ssh_mount k, v
 		}
 		ssh_mount "here"
+=end
 		docker_make_mirror(config)
 		info "Working for provisions 2/2"
 		(config["after-init"] || []).each{|x|

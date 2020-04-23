@@ -10,10 +10,7 @@ module QD3Util
 	def docker_run_cmdline(config, line)
 		docker_make_mirror config
 		cmdline = "docker run -it --rm --privileged"
-		((config["docker"] || {})["mount"] || {}).each{|k, v|
-			cmdline << " -v/mnt/#{k}:/mnt/#{k}"
-		}
-		cmdline << " -v/mnt/here:/mnt/here"
+		cmdline << " -v/:/host"
 		if @container_name
 			cmdline << " --name #{@container_name}"
 		end
