@@ -24,7 +24,10 @@ module QD3Util
 			cmdline << " -m " << memory
 		end
 		if cdrom
-			cmdline << " -cdrom " << cdrom
+			cmdline << " -boot d -cdrom " << cdrom
+		end
+		if (kernel = config["qemu"]["kernel"])
+			cmdline << " -kernel " << kernel
 		end
 		acc = config["qemu"]["accelerator"]
 		if acc && ["hax", "whpx"].include?(acc)

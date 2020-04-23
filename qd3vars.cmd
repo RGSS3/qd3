@@ -10,6 +10,7 @@ call :setvar BASE_PUTTY   vendor\putty
 call :setvar BASE_QD2     vendor\qd2
 call :setvar BASE_QEMU    vendor\qemu
 call :setvar BASE_RUBY    vendor\ruby
+call :setvar BASE_CMDER   vendor\cmder
 
 call :setvar ISO_B2D      vendor\docker\boot2docker.iso
 call :setvar EXE_7ZA      vendor\7za\7za.exe
