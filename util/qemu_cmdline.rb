@@ -29,10 +29,32 @@ module QD3Util
 		if (kernel = config["qemu"]["kernel"])
 			cmdline << " -kernel " << kernel
 		end
+		if (initrd = config["qemu"]["initrd"])
+			cmdline << " -initrd " << initrd
+		end
+		
+		["hda", "hdb", "hdc", "hdd"].each{|x|
+			if (hd = config["qemu"][x])
+				cmdline << " -#{x} " << hdd(hd)
+			end
+		}
+		
 		acc = config["qemu"]["accelerator"]
 		if acc && ["hax", "whpx"].include?(acc)
 			cmdline << " -accel #{acc}"
 		end
 		cmdline
+	end
+	
+	def hdd(x)
+		h, a = x.split(",")
+		if !FileTest.file?(h)
+			if a
+				Kernel.system "#{ENV['QD3_BASE_QEMU']}\\qemu-img.exe create -f qcow2 #{h} #{a}"
+			else
+				abort "#{h} not found"
+			end
+		end
+		h
 	end
 end

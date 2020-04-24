@@ -1,11 +1,13 @@
 require 'json'
 module QD3Util
 	def docker_make_mirror(config)
-		mirrors = ((config["docker"] || {})["mirrors"] || [])
-		File.write "qd3_docker.tmp", JSON.dump({"registry-mirrors": mirrors})
-		ssh_push "qd3_docker.tmp", "/root/daemon.json"
-		ssh_run config, "sudo cp /root/daemon.json /etc/docker/daemon.json"
-		ssh_run config, "sudo /etc/init.d/docker restart"
+		mirrors = ((config["docker"] || {})["mirrors"])
+		if mirrors
+			File.write "qd3_docker.tmp", JSON.dump({"registry-mirrors": mirrors})
+			ssh_push "qd3_docker.tmp", "/root/daemon.json"
+			ssh_run config, "sudo cp /root/daemon.json /etc/docker/daemon.json"
+			ssh_run config, "sudo /etc/init.d/docker restart"
+		end
 	end
 	def docker_run_cmdline(config, line)
 		docker_make_mirror config
