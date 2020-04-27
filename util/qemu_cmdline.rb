@@ -16,9 +16,14 @@ module QD3Util
 				}
 			end
 		}
-		cmdline = "-net nic"
+		cmdline = "-nic"
+		
 		if !fwd.empty?
-			cmdline <<  " -net user," << fwd.join(",")
+			model = if (m = (config["qemu"]["network"] || {})["model"])
+				"model=#{m},"
+			end
+			cmdline <<  " user,#{model}" << fwd.join(",")
+			
 		end
 		if memory
 			cmdline << " -m " << memory
@@ -48,7 +53,7 @@ module QD3Util
 	
 	def hdd(x)
 		h, a = x.split(",")
-		if !FileTest.file?(h)
+		if !FileTest.file?(h) && !(h =~ /^\\\\/)
 			if a
 				Kernel.system "#{ENV['QD3_BASE_QEMU']}\\qemu-img.exe create -f qcow2 #{h} #{a}"
 			else

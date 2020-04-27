@@ -10,7 +10,9 @@ class QD3
 		config["pid"] = pid
 		info "Waiting for machine to boot"
 		saveconfig(config)
+		t = Time.now
 		ssh_ping config, pid
+		info "Boot in #{Time.now - t}s"
 		info "Working for provisions 1/2"
 		(config["init"] || []).each{|x|
 			ssh_run config, " \"" + x + "\""	
@@ -29,7 +31,7 @@ class QD3
 			ssh_run config, " \"" + x + "\""	
 		}
 		
-		info "Done"
+		info "Done in #{Time.now - t}s"
 	end
 	
 	
