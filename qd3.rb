@@ -40,7 +40,7 @@ class QD3 < Thor
 	public
 	def initialize(*)
 		super
-		enable_vt
+		#enable_vt
 		@logger = MyFileLogger.new("qd3.log") 
 	end
 end
